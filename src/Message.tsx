@@ -129,28 +129,38 @@ export function Message() {
           ...messages[0],
         },
       };
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, [
+          {
+            ...messages[0],
+          },
+        ]),
+      );
 
       if (isAttachImage) {
         //Upload file to storage (Firebase) and get URL for storing in message
         const filename = imagePath.substring(imagePath.lastIndexOf('/') + 1);
         const reference = storage().ref(`images/${filename}`);
         await reference.putFile(imagePath);
-        const url = await reference.getDownloadURL();
 
-        data.message.image = url;
         setImagePath('');
         setIsAttachImage(false);
+
+        const url = await reference.getDownloadURL();
+        data.message.image = url;
       } else if (isAttachFile) {
         //Upload file to storage (Firebase) and get URL for storing in message
         const filename = filePath.substring(filePath.lastIndexOf('/') + 1);
         const reference = storage().ref(`files/${filename}`);
         await reference.putFile(filePath);
-        const url = await reference.getDownloadURL();
 
-        data.message.file = url;
         setFilePath('');
         setIsAttachFile(false);
+
+        const url = await reference.getDownloadURL();
+        data.message.file = url;
       }
+      data.message.sent = true;
 
       firestore()
         .collection('rn_messages')

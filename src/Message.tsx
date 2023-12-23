@@ -16,6 +16,7 @@ import storage from '@react-native-firebase/storage';
 import {useRoute} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import * as DocumentPicker from 'react-native-document-picker';
 import InChatFileTransfer from './InChatFileTransfer';
@@ -62,10 +63,13 @@ export function Message() {
     console.error(error);
   }
 
-  const pickFile = async () => {
+  const pickFile = async (isImage = false) => {
     try {
+      const type = isImage
+        ? DocumentPicker.types.images
+        : DocumentPicker.types.allFiles;
       const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [type],
         copyTo: 'documentDirectory',
         mode: 'open',
         allowMultiSelection: false,
@@ -261,7 +265,7 @@ export function Message() {
           icon={() => (
             <Ionicons name="image-outline" size={28} color="#0a7cff" />
           )}
-          onPressActionButton={pickFile}
+          onPressActionButton={() => pickFile(true)}
         />
         <Actions
           {...props}
@@ -272,12 +276,8 @@ export function Message() {
             height: 30,
             marginLeft: -10,
           }}
-          icon={() => (
-            <Ionicons name="videocam-outline" size={28} color="#0a7cff" />
-          )}
-          onPressActionButton={() => {
-            console.log('Video');
-          }}
+          icon={() => <AntDesign name="filetext1" size={24} color="#0a7cff" />}
+          onPressActionButton={() => pickFile()}
         />
       </View>
     );
